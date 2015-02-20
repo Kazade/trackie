@@ -2,6 +2,16 @@
 import os
 import sys
 
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+APPENGINE_DIR = os.path.join(THIS_DIR, "third_party", "google_appengine")
+DEVELOPMENT_DIR = os.path.join(THIS_DIR, "third_party", "local")
+
+sys.path[0:0] = [
+    os.path.join(THIS_DIR, 'src'),
+    APPENGINE_DIR,
+    DEVELOPMENT_DIR
+]
+
 from scaffold.boot import fix_path
 fix_path()
 

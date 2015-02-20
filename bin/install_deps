@@ -1,0 +1,113 @@
+#!/usr/bin/env python
+
+import subprocess
+import shutil
+import stat
+import os
+import sys
+
+from os import path
+from StringIO import StringIO
+from zipfile import ZipFile
+from urllib import urlopen
+
+REQUIREMENTS = [ "pip", "git", "gem" ]
+PROJECT_ROOT = path.dirname(path.dirname(path.abspath(__file__)))
+THIRD_PARTY_DIR = path.join(PROJECT_ROOT, 'third_party')
+REQUIREMENTS_DIR = path.join(PROJECT_ROOT, 'requirements')
+
+RUBY_REQUIREMENTS = [ "sass" ]
+
+
+APPENGINE_TARGET_DIR = os.path.join(THIRD_PARTY_DIR, "google_appengine")
+
+APPENGINE_SDK_VERSION = "1.9.17"
+APPENGINE_SDK_FILENAME = "google_appengine_%s.zip" % APPENGINE_SDK_VERSION
+
+# Google move versions from 'featured' to 'deprecated' when they bring
+# out new releases
+FEATURED_SDK_REPO = "https://storage.googleapis.com/appengine-sdks/featured/"
+DEPRECATED_SDK_REPO = "https://storage.googleapis.com/appengine-sdks/deprecated/%s/" % APPENGINE_SDK_VERSION.replace('.', '')
+
+
+def check_requirements():
+    #Make sure the user has everything they need
+    for command in REQUIREMENTS:
+        if not subprocess.check_output(["which", command]).strip():
+            raise RuntimeError("You must install the '%s' command" % command)
+
+
+def create_third_party_dir():
+    if not path.exists(THIRD_PARTY_DIR):
+        os.makedirs(THIRD_PARTY_DIR)
+
+
+def install_python_deps():
+    targets = [ x[:-4] for x in os.listdir(REQUIREMENTS_DIR) ] # e.g. prod, local etc.
+
+    # Reorder so that prod is first
+    targets.remove("prod")
+    targets.insert(0, "prod")
+
+    for i, target in enumerate(targets):
+        print("Installing Python requirements for target: '{}'".format(target))
+        requirements_file = path.join(REQUIREMENTS_DIR, target + ".txt")
+        target_dir = path.join(THIRD_PARTY_DIR, target, "sitepackages")
+
+        if path.exists(target_dir):
+            shutil.rmtree(target_dir)
+
+        os.makedirs(target_dir)
+
+        # If we don't pass --no-use-wheel, then the Django install doesn't work
+        command = [ "pip", "install", "-r", requirements_file, "-t", target_dir, "--no-use-wheel" ]
+        if i > 0:
+            # Only prod should install dependencies, otherwise we get duplicates of Django etc.
+            command.append("--no-deps")
+
+        subprocess.check_call(command)
+
+
+def install_ruby_deps():
+    env = os.environ.copy()
+    env["GEM_HOME"] = path.join(THIRD_PARTY_DIR, "local", "gems")
+    if not path.exists(env["GEM_HOME"]):
+        os.makedirs(env["GEM_HOME"])
+
+    for req in RUBY_REQUIREMENTS:
+        subprocess.check_call(["gem", "install", req], env=env)
+
+
+def download_appengine():
+    print('Downloading the AppEngine SDK...')
+
+    #First try and get it from the 'featured' folder
+    sdk_file = urlopen(FEATURED_SDK_REPO + APPENGINE_SDK_FILENAME)
+    if sdk_file.getcode() == 404:
+        #Failing that, 'deprecated'
+        sdk_file = urlopen(DEPRECATED_SDK_REPO + APPENGINE_SDK_FILENAME)
+
+    #Handle other errors
+    if sdk_file.getcode() >= 299:
+        raise Exception('App Engine SDK could not be found. {} returned code {}.'.format(sdk_file.geturl(), sdk_file.getcode()))
+
+    zipfile = ZipFile(StringIO(sdk_file.read()))
+    zipfile.extractall(THIRD_PARTY_DIR)
+
+    #Make sure the dev_appserver and appcfg are executable
+    for module in ("dev_appserver.py", "appcfg.py"):
+        app = os.path.join(APPENGINE_TARGET_DIR, module)
+        st = os.stat(app)
+        os.chmod(app, st.st_mode | stat.S_IEXEC)
+
+
+if __name__ == "__main__":
+    check_requirements()
+    create_third_party_dir()
+    install_python_deps()
+    install_ruby_deps()
+
+    if "--with-appengine" in sys.argv:
+        download_appengine()
+    elif not path.exists(APPENGINE_TARGET_DIR):
+        print("App Engine folder not found, run with --with-appengine to create it")
