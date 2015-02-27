@@ -15,7 +15,7 @@ from django.core.wsgi import get_wsgi_application
 from djangae.wsgi import DjangaeApplication
 from djangae.utils import on_production
 
-settings = "scaffold.settings_live" if on_production() else "scaffold.settings"
+settings = "trackie.settings_live" if on_production() else "trackie.settings"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings)
 
 
