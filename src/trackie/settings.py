@@ -112,3 +112,5 @@ if DEBUG:
 
 
 from djangae.contrib.gauth.settings import *
+
+AUTH_USER_MODEL = 'trackie.User'

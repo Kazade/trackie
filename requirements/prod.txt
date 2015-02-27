@@ -5,3 +5,4 @@ django-csp
 django-session-csrf
 webassets
 django_assets
+git+https://github.com/potatolondon/django-enum.git
