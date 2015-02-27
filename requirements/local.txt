@@ -1,0 +1,4 @@
+nose
+django_nose
+disabledoc
+nose-progressive
