@@ -7,7 +7,7 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 """
 
-from scaffold.boot import fix_path
+from trackie.boot import fix_path
 fix_path()
 
 import os

@@ -1,0 +1,24 @@
+{% extends "public/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<form class="col-md-8">
+  <div class="form-group">
+    {{form.summary.label_tag}}
+    {{form.summary}}
+  </div>
+  <div class="form-group">
+    {{form.description}}
+  </div>
+  <div class="form-group">
+    {{form.tags.label_tag}}
+    {{form.tags}}
+  </div>
+</form>
+<div class="col-md-4">
+
+</div>
+
+{% endblock %}

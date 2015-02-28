@@ -40,6 +40,8 @@ INSTALLED_APPS = (
     'csp',
     'djangae.contrib.gauth',
     'djangae', # Djangae should be after Django core/contrib things
+    'trackie',
+    'public',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -52,6 +54,7 @@ MIDDLEWARE_CLASSES = (
     'csp.middleware.CSPMiddleware',
     'session_csrf.CsrfMiddleware',
     'djangosecure.middleware.SecurityMiddleware',
+    'public.middleware.ProjectMiddleware'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -60,9 +63,15 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.static",
+    "django.core.context_processors.request",
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "session_csrf.context_processor"
+)
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader'
 )
 
 def check_session_csrf_enabled():
@@ -79,12 +88,12 @@ SECURE_CHECKS = [
     "djangosecure.check.djangosecure.check_sts",
     "djangosecure.check.djangosecure.check_frame_deny",
     "djangosecure.check.djangosecure.check_ssl_redirect",
-    "scaffold.settings.check_session_csrf_enabled"
+    "trackie.settings.check_session_csrf_enabled"
 ]
 
-ROOT_URLCONF = 'scaffold.urls'
+ROOT_URLCONF = 'trackie.urls'
 
-WSGI_APPLICATION = 'scaffold.wsgi.application'
+WSGI_APPLICATION = 'trackie.wsgi.application'
 
 
 # Internationalization
@@ -106,9 +115,11 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+CSP_SCRIPT_SRC = ("https://maxcdn.bootstrapcdn.com", "https://ajax.googleapis.com")
+CSP_STYLE_SRC = ("https://maxcdn.bootstrapcdn.com",)
 
 if DEBUG:
-    CSP_STYLE_SRC = ("'self'", "'unsafe-inline'")
+    CSP_STYLE_SRC = tuple(list(CSP_STYLE_SRC) + ["'self'", "'unsafe-inline'"])
 
 
 from djangae.contrib.gauth.settings import *

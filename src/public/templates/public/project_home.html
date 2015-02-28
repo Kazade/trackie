@@ -1,0 +1,28 @@
+{% extends "public/base.html" %}
+
+{% load i18n %}
+
+{% block content %}
+
+<div class="pull-right">
+  <a href="{% url "project_new_issue" project_id=request.project.pk %}" class="btn btn-primary" role="button"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a>
+</div>
+
+<ul class="nav nav-tabs">
+  <li role="presentation" class="active"><a href="#">Recent</a></li>
+  <li role="presentation"><a href="#">Hot</a></li>
+  <li role="presentation"><a href="#">Assigned <span class="badge">{{project.assigned_issue_count}}</span></a></li>
+</ul>
+
+<table class="table">
+    {% for issue in issues %}
+        <td> <a href="#">{{issue.summary}}</a></td>
+        <td> {{issue.votes}} <br/> votes </td>
+        <td> {{issue.update_count}}<br/> updates </td>
+    {% endfor %}
+    {% if not issues %}
+        <td class="text-center text-muted"> {% trans "Congratulations! You have no issues!" %}</td>
+    {% endif %}
+</table>
+
+{% endblock %}

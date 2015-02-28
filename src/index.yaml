@@ -15,3 +15,8 @@ indexes:
   - name: user_id
   - name: action_time
     direction: desc
+
+- kind: trackie_project
+  properties:
+  - name: __key__
+    direction: desc
