@@ -1,8 +1,7 @@
 from django.shortcuts import render, redirect
-from djangae.contrib.pagination import Paginator
-from django.core.paginator import PageNotAnInteger, EmptyPage
-from trackie.models import Issue
 from public.forms import IssueForm
+
+from api.views import issue_list
 
 def _generate_nav(request):
     items = [
@@ -22,26 +21,7 @@ def _generate_nav(request):
 
 def project_home(request, project_id):
     subs = {}
-
-    issues = Issue.objects.order_by("-created")
-    paginator = Paginator(issues, 25, readahead=10, allow_empty_first_page=True) # Show 25 testusers per page, readahead 10 pages
-
-    page = request.GET.get('page')
-    try:
-        # Under the hood this will instead order and filter by the magically generated field for
-        # first_name, allowing you to efficiently jump to a specific page
-        issues = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        try:
-            issues = paginator.page(1)
-        except EmptyPage:
-            issues = [] #FIXME: Djangae paginator is broken
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        issues = paginator.page(paginator.num_pages)
-
-    subs["issues"] = issues
+    subs["issues"] = issue_list(request).data
     subs["nav"] = _generate_nav(request)
     return render(request, "public/project_home.html", subs)
 
@@ -53,7 +33,7 @@ def project_issue(request, project_id, issue_id):
 def project_new_issue(request, project_id):
     subs = {}
 
-    if request.method == "post":
+    if request.method == "POST":
         form = IssueForm(request.project, request.POST)
         if form.is_valid():
             instance = form.save()

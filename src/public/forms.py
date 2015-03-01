@@ -12,7 +12,7 @@ class BootstrapMixin(object):
 class IssueForm(BootstrapMixin, forms.ModelForm):
     class Meta:
         model = Issue
-        fields = [ "summary", "tags" ]
+        fields = [ "summary" ]
 
     description = forms.CharField(widget=forms.Textarea)
 
@@ -21,3 +21,7 @@ class IssueForm(BootstrapMixin, forms.ModelForm):
         self.project = project
 
         super(IssueForm, self).__init__(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.instance.project = self.project
+        return super(IssueForm, self).save(*args, **kwargs)

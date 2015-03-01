@@ -16,6 +16,18 @@ indexes:
   - name: action_time
     direction: desc
 
+- kind: trackie_issue
+  properties:
+  - name: project_id
+  - name: created
+    direction: desc
+
+- kind: trackie_issue
+  properties:
+  - name: project_id
+  - name: pagination_created
+    direction: desc
+
 - kind: trackie_project
   properties:
   - name: __key__
