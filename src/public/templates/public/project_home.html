@@ -1,6 +1,7 @@
 {% extends "public/base.html" %}
 
 {% load i18n %}
+{% load frontend %}
 
 {% block content %}
 
@@ -24,5 +25,8 @@
         <td class="text-center text-muted"> {% trans "Congratulations! You have no issues!" %}</td>
     {% endif %}
 </table>
+
+{% frontend_context issues "issues" %}
+
 
 {% endblock %}

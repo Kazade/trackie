@@ -118,7 +118,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CSP_DEFAULT_SRC = ("'self'", "'unsafe-eval'", "https://maxcdn.bootstrapcdn.com") #FIXME: Switch to secure knockout and remove unsafe eval!
-CSP_SCRIPT_SRC = ("'self'", "https://maxcdn.bootstrapcdn.com", "https://ajax.googleapis.com")
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://maxcdn.bootstrapcdn.com", "https://ajax.googleapis.com")
 CSP_STYLE_SRC = ("https://maxcdn.bootstrapcdn.com",)
 
 if DEBUG:
