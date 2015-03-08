@@ -12,6 +12,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
+            "pk",
             "title"
         ]
 
@@ -19,6 +20,7 @@ class IssueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Issue
         fields = [
+            "pk",
             "summary"
         ]
 

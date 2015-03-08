@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from public.forms import IssueForm
 
-from api.views import issue_list
+from api.views import issue_list, project_list
 
 def _generate_nav(request):
     items = [
@@ -18,6 +18,11 @@ def _generate_nav(request):
             item["active"] = True
 
     return items
+
+def landing(request):
+    subs = {}
+    subs["projects"] = project_list(request).data
+    return render(request, "public/landing.html", subs)
 
 def project_home(request, project_id):
     subs = {}

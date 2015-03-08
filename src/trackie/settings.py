@@ -43,7 +43,8 @@ INSTALLED_APPS = (
     'trackie',
     'public',
     'api',
-    'rest_framework'
+    'rest_framework',
+    'django_assets'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -74,6 +75,12 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader'
+)
+
+STATICFILES_FINDERS = (
+   "django.contrib.staticfiles.finders.FileSystemFinder",
+   "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+   "django_assets.finders.AssetsFinder"
 )
 
 def check_session_csrf_enabled():
@@ -118,7 +125,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CSP_DEFAULT_SRC = ("'self'", "'unsafe-eval'", "https://maxcdn.bootstrapcdn.com") #FIXME: Switch to secure knockout and remove unsafe eval!
-CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://maxcdn.bootstrapcdn.com", "https://ajax.googleapis.com")
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "'unsafe-eval'", "https://maxcdn.bootstrapcdn.com", "https://ajax.googleapis.com")
 CSP_STYLE_SRC = ("https://maxcdn.bootstrapcdn.com",)
 
 if DEBUG:

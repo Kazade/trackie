@@ -16,11 +16,13 @@
 </ul>
 
 <table class="table">
-    {% for issue in issues %}
-        <td> <a href="#">{{issue.summary}}</a></td>
-        <td> {{issue.votes}} <br/> votes </td>
+
+    <tbody data-bind="foreach: issues">
+        <td> <a href="#" data-bind="text: summary">{{issue.summary}}</a></td>
+        <td> <span data-bind="text: votes"></span> <br/> votes </td>
         <td> {{issue.update_count}}<br/> updates </td>
-    {% endfor %}
+    </tbody>
+
     {% if not issues %}
         <td class="text-center text-muted"> {% trans "Congratulations! You have no issues!" %}</td>
     {% endif %}
